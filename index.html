@@ -50,13 +50,23 @@ frame.on("ready", () => { // ES6 Arrow Function - like function(){}
     // This can be set back with TIME = "milliseconds" but we suggest you give it a try!
     // There will be a warning in the conslole if your animation is not moving ;-)
     // var physics = new Physics (0);
-
+    var physics = new Physics(0).drag();
     
     //check connection to js script
     lambb.secondFunction();
 
     // put your code here (you can delete this sample code)
     let orbtest = new lambb.OrbP().center();
+    physics.join (
+        this.semiP,
+        this.semiN,
+        (x,y),
+        (x,y),
+        null,
+        null,
+        "weld"
+
+    ).drag();
 
 
 //PHYSICS STUFF HAPPENING HERE

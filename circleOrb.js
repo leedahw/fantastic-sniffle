@@ -1,6 +1,6 @@
 var lambb = function (lambb) {
 
-  var physics = new Physics (0);
+  // var physics = new Physics (0);
 
 
 
@@ -24,16 +24,8 @@ var lambb = function (lambb) {
         color:color2,
         radius:radius,
         percent: 50
-      }).center(this).rot(180).addPhysics();
-      physics.join(
-        this.semiP,
-        this.semiN,
-        null,
-        new Point(),
-        null,
-        null,
-        "weld"
-      );
+      }).center(this).rot(180).addPhysics().mov();
+
 
       
 
