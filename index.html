@@ -16,6 +16,7 @@
 <!-- import Box2D and ZIM Physics helper -->
 <script src="https://zimjs.org/cdn/Box2dWeb-2.1.a.3.min.js"></script>
 <script src="https://zimjs.org/cdn/physics_2.0.js"></script>
+<script src="./circleOrb.js"></script>
 
 <script>
 
@@ -48,8 +49,15 @@ frame.on("ready", () => { // ES6 Arrow Function - like function(){}
     // All previous versions, examples, videos, etc. have time in milliseconds
     // This can be set back with TIME = "milliseconds" but we suggest you give it a try!
     // There will be a warning in the conslole if your animation is not moving ;-)
+    // var physics = new Physics (0);
+
+    
+    //check connection to js script
+    lambb.secondFunction();
 
     // put your code here (you can delete this sample code)
+    let orbtest = new lambb.OrbP().center();
+
 
 //PHYSICS STUFF HAPPENING HERE
 
