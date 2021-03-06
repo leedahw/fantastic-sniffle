@@ -21,13 +21,23 @@
         // physics.remove(physics.borderTop); //remove border which is blocking/catching olives above canvas
         physics.drag();
         //physics.debug();
+
         class StickIt {
           constructor(x, y) {
-            const sam = (this.sam = new Circle(150, "red")
+            const sam = (this.sam = new Circle({
+              radius: 150,
+              color: red,
+              percent: 50,
+            })
               .pos(600, 500)
+              .rot(180)
               .loc(x, y)
               .addPhysics());
-            const ralph = (this.ralph = new Circle(200, "blue")
+            const ralph = (this.ralph = new Circle({
+              radius: 150,
+              color: blue,
+              percent: 50,
+            })
               .pos(400, 300)
               .loc(x, y)
               .addPhysics());
@@ -39,13 +49,19 @@
               new Point(ralph.x, ralph.y - 100),
               null,
               null,
-              "revolute"
+              null
             );
           }
         } //end of class
         const spacing = 30;
         const y = stageH / 2 - 100;
-        const thingie = new StickIt(stageW / 2 + spacing * -2, y);
+        const thingie = new StickIt(stageW / 2 + spacing * -2, y + 500);
+        const thingie2 = new StickIt(stageW / 2 + spacing * -2, y);
+
+        if (thingie.hitTestBounds(thingie2, 10)) {
+          zog("ralph and sam are touching");
+        }
+
         stage.update();
       });
     </script>
