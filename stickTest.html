@@ -57,13 +57,40 @@
         const y = stageH / 2 - 100;
         const thingie = new StickIt(stageW / 2 + spacing * -2, y + 500);
         const thingie2 = new StickIt(stageW / 2 + spacing * -2, y);
+        zog(thingie.sam.hitTestCircles(thingie2.ralph));
 
-        if (thingie.hitTestBounds(thingie2, 10)) {
-          zog("ralph and sam are touching");
-        }
+        Ticker.add(() => {
+          //thingie.sam.on("pressmove", function () {
+          // if (thingie.sam.hitTestCircles(thingie2.ralph)) {
+          //   zog("ralph and sam are touching");
+          //   //we need way to find location of other circle in hitTest and apply force in that direction
+          //   zog(
+          //     "thingie.sam: " + "x= " + thingie.sam.x + "y= " + thingie.sam.y
+          //   );
+          //   zog(
+          //     "thingie2.ralph: " +
+          //       "x= " +
+          //       thingie2.ralph.x +
+          //       "y= " +
+          //       thingie.sam.y
+          //   );
+          if (thingie.sam.hitTestCircles(thingie2.ralph, 100)) {
+            thingie.sam.force(
+              thingie2.ralph.x - thingie.sam.x,
+              thingie2.ralph.y - thingie.sam.y
+            );
+            thingie2.ralph.force(
+              thingie.sam.x - thingie2.ralph.x,
+              thingie.sam.y - thingie2.ralph.y
+            );
+          }
+        });
+
+        //}
+        //});
 
         stage.update();
-      });
+      }); //end of ready
     </script>
     <meta name="viewport" content="width=device-width, user-scalable=no" />
   </head>
