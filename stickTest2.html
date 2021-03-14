@@ -22,7 +22,7 @@
         physics.drag();
         //physics.debug();
         
-        var magnetism = 6; //higher number increases how fast magnetism works.
+        var magnetism = 0.1; //higher number increases how fast magnetism works.
 
         class OrbMagnet {
           constructor(x, y) {
@@ -34,7 +34,7 @@
               .pos(600, 500)
               .rot(180)
               .loc(x, y)
-              .addPhysics());
+              .addPhysics().outline());
             const negativeSide = (this.negativeSide = new Circle({
               radius: 50,
               color: blue,
@@ -42,7 +42,7 @@
             })
               .pos(400, 300)
               .loc(x, y)
-              .addPhysics());
+              .addPhysics().outline());
 
             physics.join(
               positiveSide,
@@ -60,7 +60,7 @@
 
         const orbsArray = [];
 
-        for (i=0; i < 2; i++ ) {
+        for (i=0; i < 3; i++ ) {
 
           var randX = rand(0, stageW, true, false); //using ZIM random function to get a random integer between 0 and stage Width.  
           var randY = rand(0, stageH, true, false); //using ZIM random function to get a random integer between 0 and stage Height.
@@ -79,24 +79,54 @@
 
         Ticker.add(() => {
 
-          for (i=0; i < orbsArray[i].length; i++){
+          for (i=0; i < orbsArray.length; i++){
 
-            if (orbsArray[0].positiveSide.hitTestCircles(orbsArray[1].negativeSide, 100)) {
-                zog("true");
+            orbsArray[i].positiveSide.outline();
+            orbsArray[i].negativeSide.outline();
 
-              orbsArray[0].positiveSide.force(
-                  (orbsArray[1].negativeSide.x - orbsArray[0].positiveSide.x)*magnetism,
-                  (orbsArray[1].negativeSide.y - orbsArray[0].positiveSide.y)*magnetism
-                );
-              orbsArray[1].negativeSide.force(
-                (orbsArray[0].positiveSide.x - orbsArray[1].negativeSide.x)*magnetism,
-                (orbsArray[0].positiveSide.y - orbsArray[1].negativeSide.y)*magnetism
-              );
+            for (j=0; j < orbsArray.length; j++){
 
+                if (orbsArray[i].positiveSide.hitTestCircles(orbsArray[j].negativeSide, 100)) {
+                    zog("attracting orb: " + i + " to orb: " + j);
+
+                    orbsArray[i].positiveSide.force(
+                        (orbsArray[j].negativeSide.x - orbsArray[i].positiveSide.x)*magnetism,
+                        (orbsArray[j].negativeSide.y - orbsArray[i].positiveSide.y)*magnetism
+                        );
+                    orbsArray[j].negativeSide.force(
+                        (orbsArray[i].positiveSide.x - orbsArray[j].negativeSide.x)*magnetism,
+                        (orbsArray[i].positiveSide.y - orbsArray[j].negativeSide.y)*magnetism
+                    );
+
+                } else if(orbsArray[i].negativeSide.hitTestCircles(orbsArray[j].negativeSide, 100)) { 
+                    zog("repelling negativeSide-orb: " + i + " to negativeSide-orb: " + j);
+
+                    orbsArray[i].negativeSide.force(
+                        -(orbsArray[j].negativeSide.x - orbsArray[i].negativeSide.x)*magnetism,
+                        -(orbsArray[j].negativeSide.y - orbsArray[i].negativeSide.y)*magnetism
+                    );
+                    orbsArray[j].negativeSide.force(
+                        -(orbsArray[i].negativeSide.x - orbsArray[j].negativeSide.x)*magnetism,
+                        -(orbsArray[i].negativeSide.y - orbsArray[j].negativeSide.y)*magnetism
+                    );
+
+                } else if(orbsArray[i].positiveSide.hitTestCircles(orbsArray[1].positiveSide, 100)) { 
+                    zog("repelling positiveSide-orb: " + i + " to positiveSide-orb: " + j);
+
+                    orbsArray[i].positiveSide.force(
+                        -(orbsArray[j].positiveSide.x - orbsArray[i].positiveSide.x)*magnetism,
+                        -(orbsArray[j].positiveSide.y - orbsArray[i].positiveSide.y)*magnetism
+                    );
+                    orbsArray[j].positiveSide.force(
+                        -(orbsArray[i].positiveSide.x - orbsArray[j].positiveSide.x)*magnetism,
+                        -(orbsArray[i].positiveSide.y - orbsArray[j].positiveSide.y)*magnetism
+                    );
+
+                }
+
+                stage.update();
             }
-
-
-          }
+        }
          
           
         });
