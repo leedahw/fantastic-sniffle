@@ -52,7 +52,7 @@
               //pM3:(new Circle({radius: magnetRadius,color: black}).loc(x, y).addPhysics({friction: 2}).outline())
             }
 
-            const positiveMagnets = this.negativeMagnets = {
+            const negativeMagnets = this.negativeMagnets = {
               nM1:(new Circle({radius: magnetRadius,color: red}).loc(x+magnetPolarization, y ).addPhysics({friction: 2}).outline()), 
               nM2:(new Circle({radius: magnetRadius,color: red}).loc(x-magnetPolarization, y ).addPhysics({friction: 2}).outline())
               // ,nM3:(new Circle({radius: magnetRadius,color: red}).loc(x, y).addPhysics({friction: 2}).outline())
