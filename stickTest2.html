@@ -27,8 +27,17 @@
         const orbMagneticField = 30; //the size of the magnetic field aread around each side(positive & negative) of the orb
         const orbPolarization = 50; //best range [0-20]distance between the negative and positive poles inside the orbs
 
-        class OrbMagnet {
+        class Orb {
           constructor(x, y, r,) {
+
+            const orbLarge = (this.orbLarge = new Circle({
+              radius: r,
+              color: white,
+              //percent: 50
+            })
+            .loc(x, y)
+            .addPhysics({friction: 2}).outline());
+
 
             var magnetRadius = r/4;
             var magnetPolarization = r-magnetRadius;
@@ -70,36 +79,6 @@
           }
         } //end of class
 
-
-        class Orb {
-          constructor(x,y,r) {
-
-            //call orb magnet class and make magnets
-            const internalMagnets = (this.internalMagnets = OrbMagnet(x, y, r));
-
-
-            const orbLarge = (this.orbLarge = new Circle({
-              radius: r,
-              color: white,
-              //percent: 50
-            })
-            .loc(x, y)
-            .addPhysics({friction: 2}).outline());
-
-
-            //Join giant orb with 
-            physics.join(
-              internalMagnets,
-              orbLarge,
-              null,
-              new Point(orbLarge.x, orbLarge.y),
-              null,
-              null,
-              null
-            );
-            
-          }
-        }
         const spacing = 30;
         const y = stageH / 2 - 100;
 
@@ -119,7 +98,7 @@
         }
 
         zog(orbsArray);
-        zog(orbsArray[0].negativeSide.physics);
+        //zog(orbsArray[0].negativeSide.physics);
         
         //zog(thingie.positiveSide.hitTestCircles(thingie2.negativeSide));
 
@@ -134,8 +113,8 @@
 
           for (i=0; i < orbsArray.length; i++){
             
-            orbsArray[i].positiveSide.outline();
-            orbsArray[i].negativeSide.outline();
+            // orbsArray[i].positiveSide.outline();
+            // orbsArray[i].negativeSide.outline();
 
             for (j=0; j < orbsArray.length; j++){
 
