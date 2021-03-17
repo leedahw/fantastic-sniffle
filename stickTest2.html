@@ -25,33 +25,38 @@
         const magnetism = .7; //higher number increases how fast magnetism works.
         const orbFriction = 3; //friction of ball on canvas. how quickly its force will dissapate
         const orbMagneticField = 30; //the size of the magnetic field aread around each side(positive & negative) of the orb
-        const orbPolarization = 70; //distance between the negative and positive poles inside the orbs
+        const orbPolarization = 50; //best range [0-20]distance between the negative and positive poles inside the orbs
 
         class OrbMagnet {
-          constructor(x, y) {
+          constructor(x, y, r,) {
+
+            var magnetRadius = r/4;
+            var magnetPolarization = r-magnetRadius;
+
             const positiveSide = (this.positiveSide = new Circle({
-              radius: 50,
+              radius: magnetRadius,
               color: black,
               //percent: 50
             })
               //.pos(600, 500)
               //.rot(180)
-              .loc(x, y)
+              .loc(x-magnetPolarization , y)
               .addPhysics({friction: 2}).outline());
+
             const negativeSide = (this.negativeSide = new Circle({
-              radius: 50,
+              radius: magnetRadius,
               color: red,
               //percent: 50
             })
               // .pos(0, 300)
-              .loc(x+orbPolarization, y)
+              .loc(x+magnetPolarization, y)
               .addPhysics({friction: 2}).outline());
 
-            var pointTest1 = new Point(positiveSide.x, positiveSide.y);
-            zog(pointTest1.x,pointTest1.y);
+            // var pointTest1 = new Point(positiveSide.x, positiveSide.y);
+            // zog(pointTest1.x,pointTest1.y);
 
-            var pointTest2 = new Point(negativeSide.x, negativeSide.y);
-            zog(pointTest2.x + 50,pointTest2.y +50);
+            // var pointTest2 = new Point(negativeSide.x, negativeSide.y);
+            // zog(pointTest2.x + 50,pointTest2.y +50);
 
             physics.join(
               positiveSide,
@@ -64,6 +69,37 @@
             );
           }
         } //end of class
+
+
+        class Orb {
+          constructor(x,y,r) {
+
+            //call orb magnet class and make magnets
+            const internalMagnets = (this.internalMagnets = OrbMagnet(x, y, r));
+
+
+            const orbLarge = (this.orbLarge = new Circle({
+              radius: r,
+              color: white,
+              //percent: 50
+            })
+            .loc(x, y)
+            .addPhysics({friction: 2}).outline());
+
+
+            //Join giant orb with 
+            physics.join(
+              internalMagnets,
+              orbLarge,
+              null,
+              new Point(orbLarge.x, orbLarge.y),
+              null,
+              null,
+              null
+            );
+            
+          }
+        }
         const spacing = 30;
         const y = stageH / 2 - 100;
 
@@ -74,7 +110,7 @@
           var randX = rand(0, stageW, true, false); //using ZIM random function to get a random integer between 0 and stage Width.  
           var randY = rand(0, stageH, true, false); //using ZIM random function to get a random integer between 0 and stage Height.
           
-          orbsArray.push(new OrbMagnet(randX, randY));
+          orbsArray.push(new Orb(randX, randY, 100));
 
           // const thingie = new StickIt(stageW / 2 + spacing * -2, y + 500);
           // const thingie2 = new StickIt(stageW / 2 + spacing * -2, y);
