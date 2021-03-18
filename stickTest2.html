@@ -22,13 +22,13 @@
         physics.drag();
         //physics.debug();
         
-        const magnetism = .9; //higher number increases how fast magnetism works.
+        const magnetism = 5; //higher number increases how fast magnetism works.
         const orbFriction = 3; //friction of ball on canvas. how quickly its force will dissapate
         const orbMagneticField = 40; //the size of the magnetic field aread around each side(positive & negative) of the orb
         const orbPolarization = 50; //best range [0-20]distance between the negative and positive poles inside the orbs
 
         class Orb {
-          constructor(x, y,r) {
+          constructor(x, y,r, magneticField, magnetism, friction) {
 
             //Draw White cirlce
             const orbLarge = (this.orbLarge = new Circle({
@@ -44,17 +44,24 @@
 
             //Array to hold Positive Magnets
             const positiveMagnets = this.positiveMagnets = [
-              (new Circle({radius: magnetRadius,color: black}).loc(x-(r/2), y-(r/2)).addPhysics({friction: 2}).outline()), 
-              (new Circle({radius: magnetRadius,color: black}).loc(x-magnetPolarization, y ).addPhysics({friction: 2}).outline()),
-              (new Circle({radius: magnetRadius,color: black}).loc(x-(r/2), y+(r/2)).addPhysics({friction: 2}).outline())
+              (new Circle({radius: magnetRadius,color: black}).loc(x-(r/2), y-(r/2)).addPhysics({friction: 2})), 
+              (new Circle({radius: magnetRadius,color: black}).loc(x-magnetPolarization, y ).addPhysics({friction: 2})),
+              (new Circle({radius: magnetRadius,color: black}).loc(x-(r/2), y+(r/2)).addPhysics({friction: 2}))
             ]
 
             //Array to hold Negative Magnets
             const negativeMagnets = this.negativeMagnets = [
-              (new Circle({radius: magnetRadius,color: red}).loc(x+(r/2), y-(r/2)).addPhysics({friction: 2}).outline()), 
-              (new Circle({radius: magnetRadius,color: red}).loc(x+magnetPolarization, y ).addPhysics({friction: 2}).outline()),
-              (new Circle({radius: magnetRadius,color: red}).loc(x+(r/2), y+(r/2)).addPhysics({friction: 2}).outline())
+              (new Circle({radius: magnetRadius,color: red}).loc(x+(r/2), y-(r/2)).addPhysics({friction: 2})), 
+              (new Circle({radius: magnetRadius,color: red}).loc(x+magnetPolarization, y ).addPhysics({friction: 2})),
+              (new Circle({radius: magnetRadius,color: red}).loc(x+(r/2), y+(r/2)).addPhysics({friction: 2}))
             ]
+
+            
+            //magnetic field for each circle. multiplies magnetic field for magnets in the middle 
+            const variedMagneticField = this.variedMagneticField = [ magneticField*1, magneticField*1.5, magneticField*1];
+
+            //magnetic pull for each circle
+            const variedMagnetism = this.variedMagnetism = [magnetism*1,magnetism*1.2, magnetism*1];
 
             // const positiveSide = (this.positiveSide = new Circle({
             //   radius: magnetRadius,
@@ -75,32 +82,22 @@
             //   .loc(x+magnetPolarization, y)
             //   .addPhysics({friction: 2}).outline());
 
-            // var pointTest1 = new Point(positiveSide.x, positiveSide.y);
-            // zog(pointTest1.x,pointTest1.y);
 
-            // var pointTest2 = new Point(negativeSide.x, negativeSide.y);
-            // zog(pointTest2.x + 50,pointTest2.y +50);
 
-            // physics.join(
-            //   positiveSide,
-            //   orbLarge,
-            //   null,
-            //   new Point(negativeSide.x, negativeSide.y),
-            //   null,
-            //   null,
-            //   null
-            // );
 
             //Joining Physics join all the positive and negative circles in the positve and negative array into the orb cricle.
-            for(i=0; i < 3; i++ ){
-              physics.join(positiveMagnets[i],orbLarge);
-              physics.join(negativeMagnets[i],orbLarge);
+            // for(i=0; i < 3; i++ ){
+            //   physics.join(this.positiveMagnets[i],orbLarge);
+            //   physics.join(this.negativeMagnets[i],orbLarge);
         
-            }
-              
+            // }
 
-
-              
+            physics.join(positiveMagnets[0],orbLarge);
+            physics.join(negativeMagnets[0],orbLarge);
+            physics.join(positiveMagnets[1],orbLarge);
+            physics.join(negativeMagnets[1],orbLarge);
+            physics.join(positiveMagnets[2],orbLarge);
+            physics.join(negativeMagnets[2],orbLarge);    
             
           }
         } //end of class
@@ -108,12 +105,12 @@
 
         const orbsArray = [];
 
-        for (i=0; i < 3; i++ ) {
+        for (i=0; i < 5; i++ ) {
 
           var randX = rand(0, stageW, true, false); //using ZIM random function to get a random integer between 0 and stage Width.  
           var randY = rand(0, stageH, true, false); //using ZIM random function to get a random integer between 0 and stage Height.
           
-          orbsArray.push(new Orb(randX, randY, 100));
+          orbsArray.push(new Orb(randX, randY, 100,orbMagneticField ,magnetism));
 
           // const thingie = new StickIt(stageW / 2 + spacing * -2, y + 500);
           // const thingie2 = new StickIt(stageW / 2 + spacing * -2, y);
@@ -134,31 +131,52 @@
         Ticker.add(() => {
 
           
-
+          //select an orb to perform hit test/attraction
           for (i=0; i < orbsArray.length; i++){
             
-            // orbsArray[i].positiveSide.outline();
-            // orbsArray[i].negativeSide.outline();
+            orbsArray[i].orbLarge.outline();
 
-            for (j=0; j < orbsArray.length; j++){
+            //for all the positve magnetic circles of attraction
+            for (p=0; p < 3; p++){
 
-              for (m=0; m < orbsArray[i].positiveMagnets.length; m++){
+              //loop through all the other orbs
+              for (otherOrb=0; otherOrb < orbsArray.length; otherOrb++){
 
-                if (orbsArray[i].positiveMagnets[m].hitTestCircles(orbsArray[j].negativeMagnets[m], orbMagneticField)) {
-                   // zog("attracting orb: " + i + " to orb: " + j);
+                
 
-                    orbsArray[i].orbLarge.force(
-                        (orbsArray[j].negativeMagnets[m].x - orbsArray[i].positiveMagnets[m].x)*magnetism,
-                        (orbsArray[j].negativeMagnets[m].y - orbsArray[i].positiveMagnets[m].y)*magnetism
-                        );
-                    orbsArray[j].negativeMagnets[m].force(
-                        (orbsArray[i].positiveMagnets[m].x - orbsArray[j].negativeMagnets[m].x)*magnetism,
-                        (orbsArray[i].positiveMagnets[m].y - orbsArray[j].negativeMagnets[m].y)*magnetism
-                    );
+                //for all the positive maggetic circles of the other orb
+                for (otherP=0; otherP < 3; otherP++){
+              
+
+                //zog("magnetic field for orb: " + i + "= "+ orbsArray[i].variedMagneticField[m]);
+                //zog("magnetic field for otherOrb : " + otherOrb + "= "+ orbsArray[otherOrb].variedMagneticField[m]);
+
+                  if (orbsArray[i].positiveMagnets[p].hitTestCircles(orbsArray[otherOrb].negativeMagnets[otherP], orbsArray[i].variedMagneticField[p])) {
+                    // zog("attracting orb: " + i + " to orb: " + j);
+
+                      // zog("attracting orb: " + i +"at innermagnet: "+ p + "to otherOrb: "+ otherOrb + "at innermagnet: "+ otherP + "at the current magnetism of" + orbsArray[i].variedMagneticField[p]);
+
+                      //apply force to the other orb that was hit
+                      orbsArray[i].orbLarge.force(
+                          (orbsArray[otherOrb].orbLarge.x - orbsArray[i].orbLarge.x)* orbsArray[i].variedMagnetism[p],
+                          (orbsArray[otherOrb].orbLarge.y - orbsArray[i].orbLarge.y)* orbsArray[i].variedMagnetism[p]
+                          );
+
+                      // zog("attracting otherOrb: " + otherOrb + "to main orb: "+ i + "at the current magnetism of" + orbsArray[otherOrb].variedMagneticField[m]);
+                      //apply force to the other orb that was hit
+                      orbsArray[otherOrb].orbLarge.force(
+                          (orbsArray[i].orbLarge.x - orbsArray[otherOrb].orbLarge.x)* orbsArray[otherOrb].variedMagnetism[otherP],
+                          (orbsArray[i].orbLarge.y - orbsArray[otherOrb].orbLarge.y)* orbsArray[otherOrb].variedMagnetism[otherP]
+                      );
+                  } 
+                  // else if(orbsArray[i].negativeMagnets[m].hitTestCircles(orbsArray[otherOrb].negativeMagnets[m], orbsArray[i].variedMagneticField[m])) { 
+
+
+
+                  // }               
                 }
 
-
-              }
+              } 
 
                 
 
@@ -190,7 +208,7 @@
 
                 stage.update();
             }
-        }
+          }
          
           
         });
