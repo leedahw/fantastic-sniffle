@@ -24,7 +24,7 @@
         
         const magnetism = 5; //higher number increases how fast magnetism works.
         const orbFriction = 3; //friction of ball on canvas. how quickly its force will dissapate
-        const orbMagneticField = 40; //the size of the magnetic field aread around each side(positive & negative) of the orb
+        const orbMagneticField = 100; //the size of the magnetic field aread around each side(positive & negative) of the orb
         const orbPolarization = 50; //best range [0-20]distance between the negative and positive poles inside the orbs
 
         class Orb {
@@ -39,7 +39,7 @@
 
 
             //Draw Magnets
-            var magnetRadius = r/4;
+            var magnetRadius = r/5;
             var magnetPolarization = r-magnetRadius;
 
             //Array to hold Positive Magnets
@@ -58,7 +58,7 @@
 
             
             //magnetic field for each circle. multiplies magnetic field for magnets in the middle 
-            const variedMagneticField = this.variedMagneticField = [ magneticField*1, magneticField*1.5, magneticField*1];
+            const variedMagneticField = this.variedMagneticField = [magneticField*.2, magneticField*.7, magneticField*.2];
 
             //magnetic pull for each circle
             const variedMagnetism = this.variedMagnetism = [magnetism*1,magnetism*1.2, magnetism*1];
@@ -168,43 +168,43 @@
                           (orbsArray[i].orbLarge.x - orbsArray[otherOrb].orbLarge.x)* orbsArray[otherOrb].variedMagnetism[otherP],
                           (orbsArray[i].orbLarge.y - orbsArray[otherOrb].orbLarge.y)* orbsArray[otherOrb].variedMagnetism[otherP]
                       );
+
+                  }
+                  
+                  if(orbsArray[i].negativeMagnets[p].hitTestCircles(orbsArray[otherOrb].negativeMagnets[otherP], orbsArray[i].variedMagneticField[p])) { 
+                      //zog("repelling negativeSide-orb: " + i + " to negativeSide-orb: " + j);
+
+                      orbsArray[i].orbLarge.force(
+                        -(orbsArray[otherOrb].orbLarge.x - orbsArray[i].orbLarge.x)*orbsArray[i].variedMagnetism[p],
+                        -(orbsArray[otherOrb].orbLarge.y - orbsArray[i].orbLarge.y)*orbsArray[i].variedMagnetism[p]
+                       );
+
+                      orbsArray[otherOrb].orbLarge.force(
+                        -(orbsArray[i].orbLarge.x - orbsArray[otherOrb].orbLarge.x)*orbsArray[otherOrb].variedMagnetism[otherP],
+                        -(orbsArray[i].orbLarge.y - orbsArray[otherOrb].orbLarge.y)*orbsArray[otherOrb].variedMagnetism[otherP]
+                      );
+
+                  }
+                  
+                  
+                  if(orbsArray[i].positiveMagnets[p].hitTestCircles(orbsArray[otherOrb].positiveMagnets[otherP], orbsArray[i].variedMagneticField[p])) { 
+                      // zog("repelling positiveSide-orb: " + i + " to positiveSide-orb: " + j);
+
+                      orbsArray[i].orbLarge.force(
+                        -(orbsArray[otherOrb].orbLarge.x - orbsArray[i].orbLarge.x)*orbsArray[i].variedMagnetism[p],
+                        -(orbsArray[otherOrb].orbLarge.y - orbsArray[i].orbLarge.y)*orbsArray[i].variedMagnetism[p]
+                       );
+
+                      orbsArray[otherOrb].orbLarge.force(
+                        -(orbsArray[i].orbLarge.x - orbsArray[otherOrb].orbLarge.x)*orbsArray[otherOrb].variedMagnetism[otherP],
+                        -(orbsArray[i].orbLarge.y - orbsArray[otherOrb].orbLarge.y)*orbsArray[otherOrb].variedMagnetism[otherP]
+                      );
+
                   } 
-                  // else if(orbsArray[i].negativeMagnets[m].hitTestCircles(orbsArray[otherOrb].negativeMagnets[m], orbsArray[i].variedMagneticField[m])) { 
-
-
-
-                  // }               
+                                
                 }
 
               } 
-
-                
-
-                // if(orbsArray[i].negativeSide.hitTestCircles(orbsArray[j].negativeSide, orbMagneticField)) { 
-                //     // zog("repelling negativeSide-orb: " + i + " to negativeSide-orb: " + j);
-
-                //     orbsArray[i].negativeSide.force(
-                //         -(orbsArray[j].negativeSide.x - orbsArray[i].negativeSide.x)*magnetism,
-                //         -(orbsArray[j].negativeSide.y - orbsArray[i].negativeSide.y)*magnetism
-                //     );
-                //     orbsArray[j].negativeSide.force(
-                //         -(orbsArray[i].negativeSide.x - orbsArray[j].negativeSide.x)*magnetism,
-                //         -(orbsArray[i].negativeSide.y - orbsArray[j].negativeSide.y)*magnetism
-                //     );
-
-                // } else if(orbsArray[i].positiveSide.hitTestCircles(orbsArray[j].positiveSide, orbMagneticField)) { 
-                //     // zog("repelling positiveSide-orb: " + i + " to positiveSide-orb: " + j);
-
-                //     orbsArray[i].positiveSide.force(
-                //         -(orbsArray[j].positiveSide.x - orbsArray[i].positiveSide.x)*magnetism,
-                //         -(orbsArray[j].positiveSide.y - orbsArray[i].positiveSide.y)*magnetism
-                //     );
-                //     orbsArray[j].positiveSide.force(
-                //         -(orbsArray[i].positiveSide.x - orbsArray[j].positiveSide.x)*magnetism,
-                //         -(orbsArray[i].positiveSide.y - orbsArray[j].positiveSide.y)*magnetism
-                //     );
-
-                // }
 
                 stage.update();
             }
