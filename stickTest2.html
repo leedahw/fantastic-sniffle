@@ -21,14 +21,14 @@
         // physics.remove(physics.borderTop); //remove border which is blocking/catching olives above canvas
         physics.drag();
         //physics.debug();
-        
+        const orbSize = 50;
         const magnetism = 5; //higher number increases how fast magnetism works.
         const orbFriction = 3; //friction of ball on canvas. how quickly its force will dissapate
         const orbMagneticField = 100; //the size of the magnetic field aread around each side(positive & negative) of the orb
         const orbPolarization = 50; //best range [0-20]distance between the negative and positive poles inside the orbs
 
         class Orb {
-          constructor(x, y,r, magneticField, magnetism, friction) {
+          constructor(x, y,r, magnetism, friction) {
 
             //Draw White cirlce
             const orbLarge = (this.orbLarge = new Circle({
@@ -37,10 +37,10 @@
               //percent: 50
             }).loc(x, y).addPhysics({friction: 2}).outline());
 
-
-            //Draw Magnets
+            //intialize Magnet variables 
             var magnetRadius = r/5;
             var magnetPolarization = r-magnetRadius;
+            var magneticField = r;
 
             //Array to hold Positive Magnets
             const positiveMagnets = this.positiveMagnets = [
@@ -55,7 +55,6 @@
               (new Circle({radius: magnetRadius,color: red}).loc(x+magnetPolarization, y ).addPhysics({friction: 2})),
               (new Circle({radius: magnetRadius,color: red}).loc(x+(r/2), y+(r/2)).addPhysics({friction: 2}))
             ]
-
             
             //magnetic field for each circle. multiplies magnetic field for magnets in the middle 
             const variedMagneticField = this.variedMagneticField = [magneticField*.2, magneticField*.7, magneticField*.2];
@@ -63,58 +62,25 @@
             //magnetic pull for each circle
             const variedMagnetism = this.variedMagnetism = [magnetism*1,magnetism*1.2, magnetism*1];
 
-            // const positiveSide = (this.positiveSide = new Circle({
-            //   radius: magnetRadius,
-            //   color: black,
-            //   //percent: 50
-            // })
-            //   //.pos(600, 500)
-            //   //.rot(180)
-            //   .loc(x-magnetPolarization , y)
-            //   .addPhysics({friction: 2}).outline());
-
-            // const negativeSide = (this.negativeSide = new Circle({
-            //   radius: magnetRadius,
-            //   color: red,
-            //   //percent: 50
-            // })
-            //   // .pos(0, 300)
-            //   .loc(x+magnetPolarization, y)
-            //   .addPhysics({friction: 2}).outline());
-
-
-
-
             //Joining Physics join all the positive and negative circles in the positve and negative array into the orb cricle.
-            // for(i=0; i < 3; i++ ){
-            //   physics.join(this.positiveMagnets[i],orbLarge);
-            //   physics.join(this.negativeMagnets[i],orbLarge);
-        
-            // }
-
             physics.join(positiveMagnets[0],orbLarge);
             physics.join(negativeMagnets[0],orbLarge);
             physics.join(positiveMagnets[1],orbLarge);
             physics.join(negativeMagnets[1],orbLarge);
             physics.join(positiveMagnets[2],orbLarge);
             physics.join(negativeMagnets[2],orbLarge);    
-            
           }
         } //end of class
 
 
         const orbsArray = [];
 
-        for (i=0; i < 5; i++ ) {
+        for (i=0; i < 10; i++ ) {
 
           var randX = rand(0, stageW, true, false); //using ZIM random function to get a random integer between 0 and stage Width.  
           var randY = rand(0, stageH, true, false); //using ZIM random function to get a random integer between 0 and stage Height.
           
-          orbsArray.push(new Orb(randX, randY, 100,orbMagneticField ,magnetism));
-
-          // const thingie = new StickIt(stageW / 2 + spacing * -2, y + 500);
-          // const thingie2 = new StickIt(stageW / 2 + spacing * -2, y);
-
+          orbsArray.push(new Orb(randX, randY, orbSize ,magnetism));
 
         }
 
