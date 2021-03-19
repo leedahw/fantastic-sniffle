@@ -127,10 +127,10 @@ frame.on("ready", ()=>{ // ES6 Arrow Function - similar to function(){}
 
                 //POSITIVE Attraction to Circle 4
 
-                // circleChild[i].force((circleChild[4].x-circleChild[i].x)*.1, (circleChild[4].y-circleChild[i].y)*.1);
+                circleChild[i].force((circleChild[4].x-circleChild[i].x)*.1, (circleChild[4].y-circleChild[i].y)*.1);
 
                 //NEGATIVE Repelant to Circle 4
-                circleChild[i].force(-(circleChild[4].x-circleChild[i].x), -(circleChild[4].y-circleChild[i].y));
+                // circleChild[i].force(-(circleChild[4].x-circleChild[i].x), -(circleChild[4].y-circleChild[i].y));
 
 
                 circleChild[i].label.rotation = Math.round(circleChild[i].damp.convert(-circleChild[i].rotation));
