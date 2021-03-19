@@ -18,7 +18,13 @@
       const height = 768;
       const color = darker; // ZIM colors like green, blue, pink, faint, clear, etc.
       const outerColor = dark; // any HTML colors like "violet", "#333", etc. are fine to use
-      const assets = ["logo.png", "greeny.jpg"];
+      const assets = [
+        "logo.png",
+        "magnet.png",
+        "magnetism.png",
+        "greeny.jpg",
+        "MagnetMusic.mp3",
+      ];
 
       const path = "assets/";
 
@@ -34,62 +40,97 @@
       );
 
       frame.on("ready", () => {
-        // ES6 Arrow Function - like function(){}
-        zog("ready from ZIM Frame"); // logs in console (F12 - choose console)
-
+        zog("ready from ZIM Frame");
         const stage = frame.stage;
         let stageW = frame.width;
         let stageH = frame.height;
 
-        // set public variables here when needed
-
-        const rectangle = new Rectangle(
-          800,
-          768,
-          new GradientColor(["#597bc1", "#633763"], [0, 1], 0, 0, 0, 500)
-        ).addTo();
         const bg01 = asset("greeny.jpg").center();
-        //.pos(0, 53, LEFT, BOTTOM);
 
         let logo;
         let musicToggle;
         let go;
         let introBack;
-        let introBack2;
-        let restart;
         let backingSound;
-        let winSound;
-        let loseSound;
-        let yaySound;
         let musicNotes;
+        let magnet;
+        let magnetismL;
+        let magnetismR;
+        let shenasie;
 
         part1();
 
         function part1() {
-          go = new Button(100, 50, "Go", grey, purple)
+          go = new Button(100, 50, "Go", silver, mist)
             .sca(0.7)
             .centerReg()
             .loc(243, 440)
             .alp(0)
             .animate({
               props: { alpha: 1 },
-              time: 2,
+              time: 8,
             });
+
+          magnet = asset("magnet.png")
+            .rot(3)
+            .sca(0.2)
+            .loc(28, 605)
+            .alp(1)
+            .animate({
+              obj: { x: 600 },
+              from: true,
+              // props: { x: 250 },
+              time: 2,
+              ease: "easeIn",
+            })
+            .wiggle("x", 40, 2, 3, 0.2, 0.5);
+
+          magnetismL = asset("magnetism.png")
+            .sca(0.05)
+
+            .loc(50, 400)
+            .alp(1)
+            // .animate({
+            //   // props: { x: 150 },
+            //   time: 5,
+            //   // ease: "easeIn",
+            // })
+            .wiggle("x", 20, 2, 3, 0.02, 0.05);
+
+          magnetismR = asset("magnetism.png")
+            .clone()
+            .sca(0.05)
+
+            .loc(150, 350)
+            .alp(1)
+            //   .animate({
+            //     // props: { x: 150 },
+            //     time: 5,
+            //     // ease: "easeIn",
+            //   });
+            .wiggle("x", 40, 2, 3, 0.02, 0.05);
 
           logo = asset("logo.png")
             .sca(0.1)
-            .loc(8, -125)
+            .loc(28, -125)
             .alp(1)
             .animate({
-              props: { y: 8 },
-              time: 2,
+              props: { y: 50 },
+              time: 5,
               ease: "easeIn",
-            });
+            })
+            .wiggle("x", 40, 2, 3, 0.2, 0.5);
 
-          musicToggle = new CheckBox(26, "Music", true, purple, purple).loc(
-            380,
-            -30
-          );
+          musicToggle = new CheckBox(30, "🎶", true, null, null).loc(380, -30);
+
+          shenasie = new Label({
+            text: "©2021 shenasie",
+            size: 10,
+            font: "Monsterrat",
+            color: "silver",
+            bold: true,
+            italic: true,
+          }).loc(400, 740);
 
           go.tap(() => {
             part2();
@@ -98,7 +139,62 @@
 
         //part 2: Main Game.
 
-        stage.update();
+        function part2() {
+          logo.animate({
+            props: { alpha: 0 },
+            time: 0.5,
+            ease: "easeIn",
+          });
+
+          magnet = asset("magnet.png")
+            .rot(3)
+            .sca(0.2)
+            .loc(28, 605)
+            .alp(0)
+            .animate({
+              obj: { x: 600 },
+              from: true,
+              time: 2,
+              ease: "easeIn",
+            })
+            .wiggle("x", 40, 2, 3, 0.2, 0.5);
+
+          magnetismL.removeFrom();
+          magnetismR.removeFrom();
+          // magnetismL = asset("magnetism.png")
+          //   .sca(0.05)
+          //   .loc(50, 400)
+          //   .alp(0)
+          //   .wiggle("x", 20, 2, 3, 0.02, 0.05);
+
+          // magnetismR = asset("magnetism.png")
+          //   .clone()
+          //   .sca(0.05)
+          //   .loc(150, 350)
+          //   .alp(0)
+          //   .wiggle("x", 40, 2, 3, 0.02, 0.05);
+
+          go.removeFrom();
+
+          backingSound = asset("MagnetMusic.mp3").play();
+
+          musicToggle
+            .animate({
+              props: { x: 380, y: 30 },
+              time: 1,
+              ease: "easeIn",
+            })
+            .change(function (e) {
+              // this will start off
+              if (!backingSound) {
+                backingSound = asset("MagnetMusic.mp3").play();
+              } else {
+                backingSound.paused = !e.target.toggled;
+              }
+            });
+
+          stage.update();
+        }
       });
     </script>
 
