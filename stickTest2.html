@@ -22,51 +22,53 @@
         physics.drag();
         //physics.debug();
         const orbSize = 50;
-        const magnetism = 10; //higher number increases how fast magnetism works.
-        //const orbFriction = 3; //friction of ball on canvas. how quickly its force will dissapate
-        //const orbMagneticField = 100; //the size of the magnetic field aread around each side(positive & negative) of the orb
-        //const orbPolarization = 50; //best range [0-20]distance between the negative and positive poles inside the orbs
+        const magnetism = 20; //higher number increases how fast orbs are attracted to each other.
+  
 
         class Orb {
-          constructor(x, y,r, magnetism, friction) {
-
-            //Draw White cirlce
-            const orbLarge = (this.orbLarge = new Circle({
-              radius: r,
-              color: white,
-              //percent: 50
-            }).loc(x, y).addPhysics({friction: 10, linear: 3, angular: 3, density:10}).outline());
-
-            // linear - (default .5) - linear damping which slows the movement - set to 0 for no damping
-            // angular - (default .5) - angular damping which slows the rotation - set to 0 for no damping
-            // density - (default 1) - the density that can affect what happens with collisions
+          constructor(x, y,r, magnetism) {
 
             //intialize Magnet variables 
             var magnetRadius = r/5;
-            var magnetPolarization = r-magnetRadius;
+            var keyMagnetX = r-magnetRadius;
             var magneticField = r;
-            var negativeColour = white;
-            var positiveColour = white;
+            var negativeColour = red;
+            var positiveColour = black;
+
+            let onePMQuotient = (r/3)*2; //amount of pixels to adjust adjacent magnets in position 1pm/5pm & 11pm/7pm positions on each orb half
+            let threePMQuotient = r/3; // amount of pixels to adjust key magnets in the 3pm/9pm position on each orb half
 
             //Array to hold Positive Magnets
             const positiveMagnets = this.positiveMagnets = [
-              (new Circle({radius: magnetRadius,color: positiveColour}).loc(x-(r/2), y-(r/2)).addPhysics({friction: 2})), 
-              (new Circle({radius: magnetRadius,color: positiveColour}).loc(x-magnetPolarization, y ).addPhysics({friction: 2})),
-              (new Circle({radius: magnetRadius,color: positiveColour}).loc(x-(r/2), y+(r/2)).addPhysics({friction: 2}))
+              (new Circle({radius: magnetRadius,color: positiveColour}).loc(x-threePMQuotient, y-onePMQuotient).addPhysics()), 
+              (new Circle({radius: magnetRadius,color: positiveColour}).loc(x-keyMagnetX, y ).addPhysics()),
+              (new Circle({radius: magnetRadius,color: positiveColour}).loc(x-threePMQuotient, y+onePMQuotient).addPhysics())
             ]
 
             //Array to hold Negative Magnets
             const negativeMagnets = this.negativeMagnets = [
-              (new Circle({radius: magnetRadius,color: negativeColour}).loc(x+(r/2), y-(r/2)).addPhysics({friction: 2})), 
-              (new Circle({radius: magnetRadius,color: negativeColour}).loc(x+magnetPolarization, y ).addPhysics({friction: 2})),
-              (new Circle({radius: magnetRadius,color: negativeColour}).loc(x+(r/2), y+(r/2)).addPhysics({friction: 2}))
+              (new Circle({radius: magnetRadius,color: negativeColour}).loc(x+threePMQuotient, y-onePMQuotient).addPhysics()), 
+              (new Circle({radius: magnetRadius,color: negativeColour}).loc(x+keyMagnetX, y ).addPhysics()),
+              (new Circle({radius: magnetRadius,color: negativeColour}).loc(x+threePMQuotient, y+onePMQuotient).addPhysics())
             ]
             
             //magnetic field for each circle. multiplies magnetic field for magnets in the middle 
-            const variedMagneticField = this.variedMagneticField = [magneticField*.2, magneticField*.9, magneticField*.2];
+            const variedMagneticField = this.variedMagneticField = [magneticField*.15, magneticField*.2, magneticField*.15];
 
             //magnetic pull for each circle
             const variedMagnetism = this.variedMagnetism = [magnetism*1,magnetism*1.2, magnetism*1];
+
+
+            //Draw White cirlce for orb
+            const orbLarge = (this.orbLarge = new Circle({
+              radius: r,
+              color: "rgba(255,255,255,0.5)",
+              //percent: 50
+            }).loc(x, y).addPhysics({friction: 100, linear: 3, angular: 5, density:10}).outline());
+
+            // linear - (default .5) - linear damping which slows the movement - set to 0 for no damping
+            // angular - (default .5) - angular damping which slows the rotation - set to 0 for no damping
+            // density - (default 1) - the density that can affect what happens with collisions
 
             //Joining Physics join all the positive and negative circles in the positve and negative array into the orb cricle.
             physics.join(positiveMagnets[0],orbLarge);
