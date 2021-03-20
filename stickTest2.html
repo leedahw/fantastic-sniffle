@@ -11,8 +11,8 @@
       // https://zimjs.com - JavaScript Canvas Framework - Code Creativity!
 
       const scaling = "fit";
-      const width = 1024;
-      const height = 1000;
+      const width = 1920;
+      const height = 1435;
       const color = light;
       const outerColor = dark;
       const assets = [
@@ -21,7 +21,13 @@
         "magnetism.png",
         "greeny.jpg",
         "MagnetMusic.mp3",
+        "smooth-ball.png",
+        "soft-ball-blue.png",
+        "soft-ball-orange.png",
+        "soft-ball-purple.png",
+        "magnets-white-background.png"
       ];
+
       const path = "assets/";
 
 
@@ -35,7 +41,7 @@
 
 
       
-        const bg01 = asset("greeny.jpg").center();
+        const bg01 = asset("magnets-white-background.png").center();
 
         let logo;
         let musicToggle;
@@ -53,9 +59,9 @@
 
         function part1() {
           go = new Button(100, 50, "Go", silver, mist)
-            .sca(0.7)
+            .sca(2)
             .centerReg()
-            .loc(243, 440)
+            .loc(stageW - 200, stageH - 100)
             .alp(0)
             .animate({
               props: { alpha: 1 },
@@ -86,31 +92,30 @@
             //   time: 5,
             //   // ease: "easeIn",
             // })
-            .wiggle("x", 20, 2, 3, 0.02, 0.05);
+            .wiggle("x", 50, 2, 3, 0.02, 0.05);
 
           magnetismR = asset("magnetism.png")
             .clone()
             .sca(0.05)
-
-            .loc(150, 350)
+            .loc(500, 350)
             .alp(1)
             //   .animate({
             //     // props: { x: 150 },
             //     time: 5,
             //     // ease: "easeIn",
             //   });
-            .wiggle("x", 40, 2, 3, 0.02, 0.05);
+            .wiggle("x", 200, 2, 3, 0.02, 0.05);
 
           logo = asset("logo.png")
-            .sca(0.1)
-            .loc(28, -125)
+            .sca(.2)
+            .loc(stageW/2, -125)
             .alp(1)
             .animate({
-              props: { y: 50 },
+              props: { y: (stageH/2) },
               time: 5,
               ease: "easeIn",
             })
-            .wiggle("x", 40, 2, 3, 0.2, 0.5);
+            .wiggle("x", stageW/2, 2, 3, 0.2, 0.5);
 
           musicToggle = new CheckBox(30, "🎶", true, null, null).loc(380, -30);
 
@@ -189,12 +194,16 @@
   
         physics.drag();
         //physics.debug();
-        const orbSize = 50;
+        const orbSize = 70;
         const magnetism = 20; //higher number increases how fast orbs are attracted to each other.
+        const howManyMagnets = 10 //how many magents should be on screen 
+        
 
         //Creating the Orb class for reuse
         class Orb {
-          constructor(x, y,r, magnetism) {
+          constructor(x, y, r, magnetism) {
+
+            
 
             //intialize Magnet variables 
             var magnetRadius = r/5;
@@ -226,32 +235,43 @@
             //magnetic pull for each circle
             const variedMagnetism = this.variedMagnetism = [magnetism*1,magnetism*1.2, magnetism*1];
 
-
+            ;
             //Draw White cirlce for orb
-            const orbLarge = (this.orbLarge = new Circle({
-              radius: r,
-              color: "rgba(255,255,255,0.5)",
-              //percent: 50
-            }).loc(x, y).addPhysics({friction: 100, linear: 3, angular: 5, density:10}).outline());
+            // const orbLarge = (this.orbLarge = new Circle({
+            //   radius: r,
+            //   color: "rgba(255,255,255,0.5)",
+            //   //percent: 50
+            // }).loc(x, y).addPhysics({friction: 100, linear: 3, angular: 5, density:10}).outline());
+
+            const orbImage = (this.orbImage = asset("smooth-ball.png").clone().centerReg().loc(x,y).sca(r*0.0130).addPhysics({friction: 100, linear: 3, angular: 70, density:10}));
+
+          
 
             // linear - (default .5) - linear damping which slows the movement - set to 0 for no damping
             // angular - (default .5) - angular damping which slows the rotation - set to 0 for no damping
             // density - (default 1) - the density that can affect what happens with collisions
 
             //Joining Physics join all the positive and negative circles in the positve and negative array into the orb cricle.
-            physics.join(positiveMagnets[0],orbLarge);
-            physics.join(negativeMagnets[0],orbLarge);
-            physics.join(positiveMagnets[1],orbLarge);
-            physics.join(negativeMagnets[1],orbLarge);
-            physics.join(positiveMagnets[2],orbLarge);
-            physics.join(negativeMagnets[2],orbLarge);    
+            //physics.join(orbImage, orbLarge); 
+            physics.join(positiveMagnets[0],orbImage);
+            physics.join(negativeMagnets[0],orbImage);
+            physics.join(positiveMagnets[1],orbImage);
+            physics.join(negativeMagnets[1],orbImage);
+            physics.join(positiveMagnets[2],orbImage);
+            physics.join(negativeMagnets[2],orbImage); 
+
+            
+
+
+
+              
           }
         } //end of class
 
 
         const orbsArray = [];
 
-        for (i=0; i < 10; i++ ) {
+        for (i=0; i < howManyMagnets; i++ ) {
 
           var randX = rand(0, stageW, true, false); //using ZIM random function to get a random integer between 0 and stage Width.  
           var randY = rand(0, stageH, true, false); //using ZIM random function to get a random integer between 0 and stage Height.
@@ -271,11 +291,16 @@
         // if (orbsArray[0].negativeSide.contact()) zog("contact on orb " + 0 )
 
         Ticker.add(() => {
+
           
           //select an orb to perform hit test/attraction
           for (i=0; i < orbsArray.length; i++){
             
-            orbsArray[i].orbLarge.outline();
+            // orbsArray[i].orbLarge.outline();
+            //orbsArray[i].orbImage.outline();
+
+            // zog(orbsArray[i].orbImage);
+            // zog(orbsArray[i].orbImage.x);
 
             //for all the positve magnetic circles of attraction
             for (p=0; p < 3; p++){
@@ -298,31 +323,57 @@
                       // zog("attracting orb: " + i +"at innermagnet: "+ p + "to otherOrb: "+ otherOrb + "at innermagnet: "+ otherP + "at the current magnetism of" + orbsArray[i].variedMagneticField[p]);
 
                     //apply force to the other orb that was hit
-                    orbsArray[i].orbLarge.force(
-                        (orbsArray[otherOrb].orbLarge.x - orbsArray[i].orbLarge.x)* orbsArray[i].variedMagnetism[p],
-                        (orbsArray[otherOrb].orbLarge.y - orbsArray[i].orbLarge.y)* orbsArray[i].variedMagnetism[p]
-                        );
+                    // orbsArray[i].orbLarge.force(
+                    //     (orbsArray[otherOrb].orbLarge.x - orbsArray[i].orbLarge.x)* orbsArray[i].variedMagnetism[p],
+                    //     (orbsArray[otherOrb].orbLarge.y - orbsArray[i].orbLarge.y)* orbsArray[i].variedMagnetism[p]
+                    //     );
 
                     // zog("attracting otherOrb: " + otherOrb + "to main orb: "+ i + "at the current magnetism of" + orbsArray[otherOrb].variedMagneticField[m]);
                     //apply force to the other orb that was hit
-                    orbsArray[otherOrb].orbLarge.force(
-                        (orbsArray[i].orbLarge.x - orbsArray[otherOrb].orbLarge.x)* orbsArray[otherOrb].variedMagnetism[otherP],
-                        (orbsArray[i].orbLarge.y - orbsArray[otherOrb].orbLarge.y)* orbsArray[otherOrb].variedMagnetism[otherP]
+                    // orbsArray[otherOrb].orbLarge.force(
+                    //     (orbsArray[i].orbLarge.x - orbsArray[otherOrb].orbLarge.x)* orbsArray[otherOrb].variedMagnetism[otherP],
+                    //     (orbsArray[i].orbLarge.y - orbsArray[otherOrb].orbLarge.y)* orbsArray[otherOrb].variedMagnetism[otherP]
+                    // );
+
+
+                    //Orb Image force section
+                    orbsArray[i].orbImage.force(
+                        (orbsArray[otherOrb].orbImage.x - orbsArray[i].orbImage.x)* orbsArray[i].variedMagnetism[p],
+                        (orbsArray[otherOrb].orbImage.y - orbsArray[i].orbImage.y)* orbsArray[i].variedMagnetism[p]
+                        );
+
+                    orbsArray[otherOrb].orbImage.force(
+                        (orbsArray[i].orbImage.x - orbsArray[otherOrb].orbImage.x)* orbsArray[otherOrb].variedMagnetism[otherP],
+                        (orbsArray[i].orbImage.y - orbsArray[otherOrb].orbImage.y)* orbsArray[otherOrb].variedMagnetism[otherP]
                     );
+
 
                   }
                   
                   if(orbsArray[i].negativeMagnets[p].hitTestCircles(orbsArray[otherOrb].negativeMagnets[otherP], orbsArray[i].variedMagneticField[p])) { 
                       //zog("repelling negativeSide-orb: " + i + " to negativeSide-orb: " + j);
 
-                      orbsArray[i].orbLarge.force(
-                        -(orbsArray[otherOrb].orbLarge.x - orbsArray[i].orbLarge.x)*orbsArray[i].variedMagnetism[p],
-                        -(orbsArray[otherOrb].orbLarge.y - orbsArray[i].orbLarge.y)*orbsArray[i].variedMagnetism[p]
+                      //Orb Large force section
+                      // orbsArray[i].orbLarge.force(
+                      //   -(orbsArray[otherOrb].orbLarge.x - orbsArray[i].orbLarge.x)*orbsArray[i].variedMagnetism[p],
+                      //   -(orbsArray[otherOrb].orbLarge.y - orbsArray[i].orbLarge.y)*orbsArray[i].variedMagnetism[p]
+                      // );
+
+                      // orbsArray[otherOrb].orbLarge.force(
+                      //   -(orbsArray[i].orbLarge.x - orbsArray[otherOrb].orbLarge.x)*orbsArray[otherOrb].variedMagnetism[otherP],
+                      //   -(orbsArray[i].orbLarge.y - orbsArray[otherOrb].orbLarge.y)*orbsArray[otherOrb].variedMagnetism[otherP]
+                      // );
+
+
+                      //Orb Image force section
+                      orbsArray[i].orbImage.force(
+                        -(orbsArray[otherOrb].orbImage.x - orbsArray[i].orbImage.x)*orbsArray[i].variedMagnetism[p],
+                        -(orbsArray[otherOrb].orbImage.y - orbsArray[i].orbImage.y)*orbsArray[i].variedMagnetism[p]
                       );
 
-                      orbsArray[otherOrb].orbLarge.force(
-                        -(orbsArray[i].orbLarge.x - orbsArray[otherOrb].orbLarge.x)*orbsArray[otherOrb].variedMagnetism[otherP],
-                        -(orbsArray[i].orbLarge.y - orbsArray[otherOrb].orbLarge.y)*orbsArray[otherOrb].variedMagnetism[otherP]
+                      orbsArray[otherOrb].orbImage.force(
+                        -(orbsArray[i].orbImage.x - orbsArray[otherOrb].orbImage.x)*orbsArray[otherOrb].variedMagnetism[otherP],
+                        -(orbsArray[i].orbImage.y - orbsArray[otherOrb].orbImage.y)*orbsArray[otherOrb].variedMagnetism[otherP]
                       );
 
                   }
@@ -331,15 +382,29 @@
                   if(orbsArray[i].positiveMagnets[p].hitTestCircles(orbsArray[otherOrb].positiveMagnets[otherP], orbsArray[i].variedMagneticField[p])) { 
                       // zog("repelling positiveSide-orb: " + i + " to positiveSide-orb: " + j);
 
-                      orbsArray[i].orbLarge.force(
-                        -(orbsArray[otherOrb].orbLarge.x - orbsArray[i].orbLarge.x)*orbsArray[i].variedMagnetism[p],
-                        -(orbsArray[otherOrb].orbLarge.y - orbsArray[i].orbLarge.y)*orbsArray[i].variedMagnetism[p]
+                      // //Orb Large force section
+                      // orbsArray[i].orbLarge.force(
+                      //   -(orbsArray[otherOrb].orbLarge.x - orbsArray[i].orbLarge.x)*orbsArray[i].variedMagnetism[p],
+                      //   -(orbsArray[otherOrb].orbLarge.y - orbsArray[i].orbLarge.y)*orbsArray[i].variedMagnetism[p]
+                      // );
+
+                      // orbsArray[otherOrb].orbLarge.force(
+                      //   -(orbsArray[i].orbLarge.x - orbsArray[otherOrb].orbLarge.x)*orbsArray[otherOrb].variedMagnetism[otherP],
+                      //   -(orbsArray[i].orbLarge.y - orbsArray[otherOrb].orbLarge.y)*orbsArray[otherOrb].variedMagnetism[otherP]
+                      // );
+
+
+                      //Orb Image force section
+                      orbsArray[i].orbImage.force(
+                        -(orbsArray[otherOrb].orbImage.x - orbsArray[i].orbImage.x)*orbsArray[i].variedMagnetism[p],
+                        -(orbsArray[otherOrb].orbImage.y - orbsArray[i].orbImage.y)*orbsArray[i].variedMagnetism[p]
                       );
 
-                      orbsArray[otherOrb].orbLarge.force(
-                        -(orbsArray[i].orbLarge.x - orbsArray[otherOrb].orbLarge.x)*orbsArray[otherOrb].variedMagnetism[otherP],
-                        -(orbsArray[i].orbLarge.y - orbsArray[otherOrb].orbLarge.y)*orbsArray[otherOrb].variedMagnetism[otherP]
+                      orbsArray[otherOrb].orbImage.force(
+                        -(orbsArray[i].orbImage.x - orbsArray[otherOrb].orbImage.x)*orbsArray[otherOrb].variedMagnetism[otherP],
+                        -(orbsArray[i].orbImage.y - orbsArray[otherOrb].orbImage.y)*orbsArray[otherOrb].variedMagnetism[otherP]
                       );
+
 
                   } 
                                 
