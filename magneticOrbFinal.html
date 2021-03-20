@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>ZIM - Code Creativity</title>
+    <title>Orbit- The relaxing Magnetic Experience</title>
     <script src="https://zimjs.org/cdn/1.3.2/createjs.js"></script>
     <script src="https://zimjs.org/cdn/cat/03/zim.js"></script>
     <script src="https://zimjs.org/cdn/Box2dWeb-2.1.a.3.min.js"></script>
@@ -15,8 +15,8 @@
       const scaling = "fit";
       const width = 1920;
       const height = 1435;
-      const color = light;
-      const outerColor = dark;
+      const color = black;
+      const outerColor = black;
       const assets = [
         "logo.png",
         "magnet.png",
@@ -27,6 +27,7 @@
         "soft-ball-blue.png",
         "soft-ball-orange.png",
         "soft-ball-purple.png",
+        "smooth-ball-pink.png",
         "magnets-white-background.png"
       ];
 
@@ -42,7 +43,7 @@
         let stageH = frame.height;
 
 
-      
+        //setbackground
         const bg01 = asset("magnets-white-background.png").center();
 
         let logo;
@@ -73,51 +74,51 @@
           magnet = asset("magnet.png")
             .rot(3)
             .sca(0.2)
-            .loc(28, 605)
+            .loc(stageW/2, 790)
             .alp(1)
             .animate({
-              obj: { x: 600 },
+              obj: { x: stageW },
               from: true,
               // props: { x: 250 },
               time: 2,
               ease: "easeIn",
             })
-            .wiggle("x", 40, 2, 3, 0.2, 0.5);
+            .wiggle("x", ((stageW/2)-50), 2, 3, 0.2, 0.5);
 
           magnetismL = asset("magnetism.png")
             .sca(0.05)
 
-            .loc(50, 400)
+            .loc(50, 530)
             .alp(1)
             // .animate({
             //   // props: { x: 150 },
             //   time: 5,
             //   // ease: "easeIn",
             // })
-            .wiggle("x", 50, 2, 3, 0.02, 0.05);
+            .wiggle("x", ((stageW/2)-50), 2, 3, 0.02, 0.05);
 
           magnetismR = asset("magnetism.png")
             .clone()
             .sca(0.05)
-            .loc(500, 350)
+            .loc(500, 530)
             .alp(1)
             //   .animate({
             //     // props: { x: 150 },
             //     time: 5,
             //     // ease: "easeIn",
             //   });
-            .wiggle("x", 200, 2, 3, 0.02, 0.05);
+            .wiggle("x", ((stageW/2)+80), 2, 3, 0.02, 0.05);
 
           logo = asset("logo.png")
             .sca(.2)
-            .loc(stageW/2, -125)
+            .loc(700, -125)
             .alp(1)
             .animate({
-              props: { y: (stageH/2) },
+              props: { y: (500) },
               time: 5,
               ease: "easeIn",
             })
-            .wiggle("x", stageW/2, 2, 3, 0.2, 0.5);
+            .wiggle("x", ((stageW/2)-100), 2, 3, 0.2, 0.5);
 
           musicToggle = new CheckBox(30, "🎶", true, null, null).loc(380, -30);
 
@@ -192,13 +193,22 @@
             });
 
             // Start Physics
-        const physics = new Physics(0);
+        const physics = new Physics({
+          gravity:0, 
+          borders:{
+            x: 0,
+            y: 0,
+            width: stageW,
+            height: stageH *.8
+          }
+        });
   
         physics.drag();
         //physics.debug();
         const orbSize = 70;
         const magnetism = 20; //higher number increases how fast orbs are attracted to each other.
-        const howManyMagnets = 10 //how many magents should be on screen 
+        const howManyRows = 4 //how many magents should be on screen 
+        const howManyCols = 4 //how many magents should be on screen 
         
 
         //Creating the Orb class for reuse
@@ -219,16 +229,16 @@
 
             //Array to hold Positive Magnets
             const positiveMagnets = this.positiveMagnets = [
-              (new Circle({radius: magnetRadius,color: positiveColour}).loc(x-threePMQuotient, y-onePMQuotient).addPhysics()), 
-              (new Circle({radius: magnetRadius,color: positiveColour}).loc(x-keyMagnetX, y ).addPhysics()),
-              (new Circle({radius: magnetRadius,color: positiveColour}).loc(x-threePMQuotient, y+onePMQuotient).addPhysics())
+              (new Circle({radius: magnetRadius,color: positiveColour}).loc(x-threePMQuotient, y-onePMQuotient).alp(0.1).addPhysics()), 
+              (new Circle({radius: magnetRadius,color: positiveColour}).loc(x-keyMagnetX, y ).alp(0.1).addPhysics()),
+              (new Circle({radius: magnetRadius,color: positiveColour}).loc(x-threePMQuotient, y+onePMQuotient).alp(0.1).addPhysics())
             ]
 
             //Array to hold Negative Magnets
             const negativeMagnets = this.negativeMagnets = [
-              (new Circle({radius: magnetRadius,color: negativeColour}).loc(x+threePMQuotient, y-onePMQuotient).addPhysics()), 
-              (new Circle({radius: magnetRadius,color: negativeColour}).loc(x+keyMagnetX, y ).addPhysics()),
-              (new Circle({radius: magnetRadius,color: negativeColour}).loc(x+threePMQuotient, y+onePMQuotient).addPhysics())
+              (new Circle({radius: magnetRadius,color: negativeColour}).loc(x+threePMQuotient, y-onePMQuotient).alp(0.1).addPhysics()), 
+              (new Circle({radius: magnetRadius,color: negativeColour}).loc(x+keyMagnetX, y ).alp(0.1).addPhysics()),
+              (new Circle({radius: magnetRadius,color: negativeColour}).loc(x+threePMQuotient, y+onePMQuotient).alp(0.1).addPhysics())
             ]
             
             //magnetic field for each circle. multiplies magnetic field for magnets in the middle 
@@ -245,7 +255,11 @@
             //   //percent: 50
             // }).loc(x, y).addPhysics({friction: 100, linear: 3, angular: 5, density:10}).outline());
 
-            const orbImage = (this.orbImage = asset("smooth-ball.png").clone().centerReg().loc(x,y).sca(r*0.0130).addPhysics({friction: 100, linear: 3, angular: 70, density:10}));
+            const orbImageToUse = ["soft-ball-blue.png","soft-ball-orange.png", "soft-ball-purple.png"];
+
+            const theOrbImage = orbImageToUse[rand(orbImageToUse.length-1)]
+
+            const orbImage = (this.orbImage = asset(theOrbImage).clone().centerReg().loc(x,y).sca(r*0.0130).addPhysics({friction: 100, linear: 3, angular: 70, density:10}));
 
           
 
@@ -273,12 +287,29 @@
 
         const orbsArray = [];
 
-        for (i=0; i < howManyMagnets; i++ ) {
+        //const rowsMagnets = 3;
+        const colsMagnets =  4;
 
-          var randX = rand(0, stageW, true, false); //using ZIM random function to get a random integer between 0 and stage Width.  
-          var randY = rand(0, stageH, true, false); //using ZIM random function to get a random integer between 0 and stage Height.
+
+        let colX = 350;
+
+        for (i=0; i < howManyRows; i++ ) {
+
+           
+          // var randY = rand(0, stageH, true, false); //using ZIM random function to get a random integer between 0 and stage Height.
+
+          // var randX = rand(0, stageW, true, false); //using ZIM random function to get a random integer between 0 and stage Width.
           
-          orbsArray.push(new Orb(randX, randY, orbSize ,magnetism));
+          for(j=0; j < howManyCols; j++){
+
+
+            orbsArray.push(new Orb(randX, randY, orbSize ,magnetism));
+
+            colX += 150;
+  
+          }
+          colX = 350;
+        
 
         }
 
