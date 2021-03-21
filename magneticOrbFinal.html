@@ -266,7 +266,7 @@
             //Draw White cirlce for orb
             const orbLarge = (this.orbLarge = new Circle({
               radius: r,
-              color: "rgba(255,255,255,0.5)",
+              color: "rgba(255,255,255,0)",
               //percent: 50
             }).loc(x, y).addPhysics({friction: 100, linear: 3, angular: 5, density:10}).outline());
            
@@ -498,6 +498,8 @@
             //match the X and Y of the mask to the orbMask. Foe each orb involed in the array for every frame in the ticker.
             orbsArray[i].orbImage.x = orbsArray[i].orbLarge.x ;
             orbsArray[i].orbImage.y = orbsArray[i].orbLarge.y ;
+            orbsArray[i].orbImage.rotation = orbsArray[i].orbLarge.rotation ;
+            
             //orbsArray[i].orbImage.zimMask.x = orbsArray[i].orbLarge.x ;
             //orbsArray[i].orbImage.zimMask.y = orbsArray[i].orbLarge.y ;
           }
