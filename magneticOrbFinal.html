@@ -207,18 +207,15 @@
         //physics.debug();
         const orbSize = 70;
         const magnetism = 20; //higher number increases how fast orbs are attracted to each other.
-        const howManyRows = 4 //how many magents should be on screen 
+        const howManyRows = 5 //how many magents should be on screen 
         const howManyCols = 4 //how many magents should be on screen 
-        const startXpos = 300; //X value where the initial orb grid starts counting
-        const startYpos = 500; //Y value where the initial orb grid starts counting
+        const startXpos = 600; //X value where the initial orb grid starts counting
+        const startYpos = 250; //Y value where the initial orb grid starts counting
 
-        
 
         //Creating the Orb class for reuse
         class Orb {
           constructor(x, y, r, magnetism) {
-
-            
 
             //intialize Magnet variables 
             var magnetRadius = r/5;
@@ -226,6 +223,7 @@
             var magneticField = r;
             var negativeColour = red;
             var positiveColour = black;
+            var pictureSize = 1;
 
             let onePMQuotient = (r/3)*2; //amount of pixels to adjust adjacent magnets in position 1pm/5pm & 11pm/7pm positions on each orb half
             let threePMQuotient = r/3; // amount of pixels to adjust key magnets in the 3pm/9pm position on each orb half
@@ -236,7 +234,7 @@
 
             const theOrbImage = orbImageToUse[rand(orbImageToUse.length-1)]
 
-            const orbImage = (this.orbImage = asset(theOrbImage).clone().centerReg().loc(x,y).sca(1));
+            const orbImage = (this.orbImage = asset(theOrbImage).clone().centerReg().loc(x,y).sca(pictureSize));
             //.addPhysics());
 
             let magnetAlp = 0;
@@ -268,12 +266,8 @@
               radius: r,
               color: "rgba(255,255,255,0)",
               //percent: 50
-            }).loc(x, y).addPhysics({friction: 100, linear: 3, angular: 5, density:10}).outline());
+            }).loc(x, y).addPhysics({friction: 100, linear: 3, angular: 5, density:10}));
            
-
-            
-
-          
 
             // linear - (default .5) - linear damping which slows the movement - set to 0 for no damping
             // angular - (default .5) - angular damping which slows the rotation - set to 0 for no damping
@@ -297,77 +291,55 @@
         } //end of class
 
 
+        //CREATE NEW ORBS INTO THE FRAME
         const orbsArray = [];
-
-        //const rowsMagnets = 3;
-        //const colsMagnets =  4;
-
 
         let colX = startXpos;
         let colY = startYpos;
 
         for (i=0; i < howManyRows; i++ ) {
-
-           
-          // var randY = rand(0, stageH, true, false); //using ZIM random function to get a random integer between 0 and stage Height.
-
-          // var randX = rand(0, stageW, true, false); //using ZIM random function to get a random integer between 0 and stage Width.
-
+          
           for(j=0; j < howManyCols; j++){
 
 
             orbsArray.push(new Orb(colX, colY, orbSize ,magnetism));
 
-            colX += 200;
+            colX += 150;
   
           }
           colX = startXpos;
-          colX += 200;
-        
+          colY += 150;
 
         }
 
+        //console log orb for testing sakes
         zog(orbsArray);
-        //zog(orbsArray[0].negativeSide.physics);
-        
-        //zog(thingie.positiveSide.hitTestCircles(thingie2.negativeSide));
 
-        // orbsArray[0].negativeSide.contact(orbsArray[0].positiveSide.physics, orbsArray[0].negativeSide.physics);
-          
-        
-        // if (orbsArray[0].negativeSide.contact()) zog("contact on orb " + 0 )
 
+        //APPLY MAGNETIC RULES TO THE ORBS
         Ticker.add(() => {
 
           
           //select an orb to perform hit test/attraction
           for (i=0; i < orbsArray.length; i++){
             
+            ////outlines for testing 
             // orbsArray[i].orbLarge.outline();
             //orbsArray[i].orbImage.outline();
-
-            // zog(orbsArray[i].orbImage);
-            // zog(orbsArray[i].orbImage.x);
 
             //for all the positve magnetic circles of attraction
             for (p=0; p < 3; p++){
 
               //loop through all the other orbs
               for (otherOrb=0; otherOrb < orbsArray.length; otherOrb++){
-
                 
-
                 //for all the positive maggetic circles of the other orb
                 for (otherP=0; otherP < 3; otherP++){
-              
-
-                //zog("magnetic field for orb: " + i + "= "+ orbsArray[i].variedMagneticField[m]);
-                //zog("magnetic field for otherOrb : " + otherOrb + "= "+ orbsArray[otherOrb].variedMagneticField[m]);
 
                   if (orbsArray[i].positiveMagnets[p].hitTestCircles(orbsArray[otherOrb].negativeMagnets[otherP], orbsArray[i].variedMagneticField[p])) {
-                    // zog("attracting orb: " + i + " to orb: " + j);
+            
 
-                      // zog("attracting orb: " + i +"at innermagnet: "+ p + "to otherOrb: "+ otherOrb + "at innermagnet: "+ otherP + "at the current magnetism of" + orbsArray[i].variedMagneticField[p]);
+                    // zog("attracting orb: " + i +"at innermagnet: "+ p + "to otherOrb: "+ otherOrb + "at innermagnet: "+ otherP + "at the current magnetism of" + orbsArray[i].variedMagneticField[p]);
 
                     //apply force to the other orb that was hit
                     orbsArray[i].orbLarge.force(
@@ -376,34 +348,12 @@
                         );
 
                     // zog("attracting otherOrb: " + otherOrb + "to main orb: "+ i + "at the current magnetism of" + orbsArray[otherOrb].variedMagneticField[m]);
+
                     //apply force to the other orb that was hit
                     orbsArray[otherOrb].orbLarge.force(
                         (orbsArray[i].orbLarge.x - orbsArray[otherOrb].orbLarge.x)* orbsArray[otherOrb].variedMagnetism[otherP],
                         (orbsArray[i].orbLarge.y - orbsArray[otherOrb].orbLarge.y)* orbsArray[otherOrb].variedMagnetism[otherP]
                         );
-
-
-                    //Orb Image force section
-                    // orbsArray[i].orbImage.force(
-                    //     (orbsArray[otherOrb].orbImage.x - orbsArray[i].orbImage.x)* orbsArray[i].variedMagnetism[p],
-                    //     (orbsArray[otherOrb].orbImage.y - orbsArray[i].orbImage.y)* orbsArray[i].variedMagnetism[p]
-                    //     );
-
-                    // orbsArray[otherOrb].orbImage.force(
-                    //     (orbsArray[i].orbImage.x - orbsArray[otherOrb].orbImage.x)* orbsArray[otherOrb].variedMagnetism[otherP],
-                    //     (orbsArray[i].orbImage.y - orbsArray[otherOrb].orbImage.y)* orbsArray[otherOrb].variedMagnetism[otherP]
-                    // );
-
-                    //match the X and Y of the mask to the orbMask. 2 Sets for each orb involed in the hit test.
-                    // orbsArray[i].orbImage.x = orbsArray[i].orbLarge.x ;
-                    // orbsArray[i].orbImage.y = orbsArray[i].orbLarge.y ;
-                    // orbsArray[i].orbImage.zimMaskriginal.x = orbsArray[i].orbLarge.x ;
-                    // orbsArray[i].orbImage.zimMask.y = orbsArray[i].orbLarge.y ;
-
-                    // orbsArray[otherOrb].orbImage.x = orbsArray[otherOrb].orbLarge.x ;
-                    // orbsArray[otherOrb].orbImage.y = orbsArray[otherOrb].orbLarge.y ;
-                    // orbsArray[otherOrb].orbImage.zimMask.x = orbsArray[otherOrb].orbLarge.x ;
-                    // orbsArray[otherOrb].orbImage.zimMask.y = orbsArray[otherOrb].orbLarge.y ;
 
 
                   }
@@ -423,28 +373,6 @@
                       );
 
 
-                      //Orb Image force section
-                      // orbsArray[i].orbImage.force(
-                      //   -(orbsArray[otherOrb].orbImage.x - orbsArray[i].orbImage.x)*orbsArray[i].variedMagnetism[p],
-                      //   -(orbsArray[otherOrb].orbImage.y - orbsArray[i].orbImage.y)*orbsArray[i].variedMagnetism[p]
-                      // );
-
-                      // orbsArray[otherOrb].orbImage.force(
-                      //   -(orbsArray[i].orbImage.x - orbsArray[otherOrb].orbImage.x)*orbsArray[otherOrb].variedMagnetism[otherP],
-                      //   -(orbsArray[i].orbImage.y - orbsArray[otherOrb].orbImage.y)*orbsArray[otherOrb].variedMagnetism[otherP]
-                      // );
-
-                    //match the X and Y of the mask to the orbMask. 2 Sets for each orb involed in the hit test.
-                    // orbsArray[i].orbImage.x = orbsArray[i].orbLarge.x ;
-                    // orbsArray[i].orbImage.y = orbsArray[i].orbLarge.y ;
-                    // orbsArray[i].orbImage.zimMask.x = orbsArray[i].orbLarge.x ;
-                    // orbsArray[i].orbImage.zimMask.y = orbsArray[i].orbLarge.y ;
-
-                    // orbsArray[otherOrb].orbImage.x = orbsArray[otherOrb].orbLarge.x ;
-                    // orbsArray[otherOrb].orbImage.y = orbsArray[otherOrb].orbLarge.y ;
-                    // orbsArray[otherOrb].orbImage.zimMask.x = orbsArray[otherOrb].orbLarge.x ;
-                    // orbsArray[otherOrb].orbImage.zimMask.y = orbsArray[otherOrb].orbLarge.y ;
-
                   }
                   
                   
@@ -462,30 +390,6 @@
                         -(orbsArray[i].orbLarge.y - orbsArray[otherOrb].orbLarge.y)*orbsArray[otherOrb].variedMagnetism[otherP]
                       );
 
-
-                      //Orb Image force section
-                      // orbsArray[i].orbImage.force(
-                      //   -(orbsArray[otherOrb].orbImage.x - orbsArray[i].orbImage.x)*orbsArray[i].variedMagnetism[p],
-                      //   -(orbsArray[otherOrb].orbImage.y - orbsArray[i].orbImage.y)*orbsArray[i].variedMagnetism[p]
-                      // );
-
-                      // orbsArray[otherOrb].orbImage.force(
-                      //   -(orbsArray[i].orbImage.x - orbsArray[otherOrb].orbImage.x)*orbsArray[otherOrb].variedMagnetism[otherP],
-                      //   -(orbsArray[i].orbImage.y - orbsArray[otherOrb].orbImage.y)*orbsArray[otherOrb].variedMagnetism[otherP]
-                      // );
-
-                    // //match the X and Y of the mask to the orbMask. 2 Sets for each orb involed in the hit test.
-                    // orbsArray[i].orbImage.x = orbsArray[i].orbLarge.x ;
-                    // orbsArray[i].orbImage.y = orbsArray[i].orbLarge.y ;
-                    // orbsArray[i].orbImage.zimMask.x = orbsArray[i].orbLarge.x ;
-                    // orbsArray[i].orbImage.zimMask.y = orbsArray[i].orbLarge.y ;
-
-                    // orbsArray[otherOrb].orbImage.x = orbsArray[otherOrb].orbLarge.x ;
-                    // orbsArray[otherOrb].orbImage.y = orbsArray[otherOrb].orbLarge.y ;
-                    // orbsArray[otherOrb].orbImage.zimMask.x = orbsArray[otherOrb].orbLarge.x ;
-                    // orbsArray[otherOrb].orbImage.zimMask.y = orbsArray[otherOrb].orbLarge.y ;
-
-
                   } 
                                 
                 }
@@ -500,8 +404,6 @@
             orbsArray[i].orbImage.y = orbsArray[i].orbLarge.y ;
             orbsArray[i].orbImage.rotation = orbsArray[i].orbLarge.rotation ;
             
-            //orbsArray[i].orbImage.zimMask.x = orbsArray[i].orbLarge.x ;
-            //orbsArray[i].orbImage.zimMask.y = orbsArray[i].orbLarge.y ;
           }
         
           
