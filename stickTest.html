@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>ZIM - Code Creativity</title>
+    <script src="https://zimjs.org/cdn/1.3.2/createjs.js"></script>
+    <script src="https://zimjs.org/cdn/cat/03/zim.js"></script>
+    <script src="https://zimjs.org/cdn/Box2dWeb-2.1.a.3.min.js"></script>
+    <script src="https://zimjs.org/cdn/physics_2.1"></script>
+    <script>
+      // https://zimjs.com - JavaScript Canvas Framework - Code Creativity!
+
+      const frame = new Frame("fit", 1024, 1000, light, dark); //note change to 1000
+      frame.on("ready", () => {
+        const stage = frame.stage;
+        let stageW = frame.width;
+        let stageH = frame.height;
+
+        // put your code here
+        const physics = new Physics(0);
+        // physics.remove(physics.borderTop); //remove border which is blocking/catching olives above canvas
+        physics.drag();
+        //physics.debug();
+        
+        var magnetism = 6; //higher number increases how fast magnetism works.
+
+        class OrbMagnet {
+          constructor(x, y) {
+            const positiveSide = (this.positiveSide = new Circle({
+              radius: 50,
+              color: red,
+              percent: 50,
+            })
+              .pos(600, 500)
+              .rot(180)
+              .loc(x, y)
+              .addPhysics());
+            const negativeSide = (this.negativeSide = new Circle({
+              radius: 50,
+              color: blue,
+              percent: 50,
+            })
+              .pos(400, 300)
+              .loc(x, y)
+              .addPhysics());
+
+            physics.join(
+              positiveSide,
+              negativeSide,
+              null,
+              new Point(negativeSide.x, negativeSide.y - 100),
+              null,
+              null,
+              null
+            );
+          }
+        } //end of class
+        const spacing = 30;
+        const y = stageH / 2 - 100;
+
+        const orbsArray = [];
+
+        for (i=0; i < 2; i++ ) {
+
+          var randX = rand(0, stageW, true, false); //using ZIM random function to get a random integer between 0 and stage Width.  
+          var randY = rand(0, stageH, true, false); //using ZIM random function to get a random integer between 0 and stage Height.
+          
+          orbsArray.push(new OrbMagnet(randX, randY));
+
+          // const thingie = new StickIt(stageW / 2 + spacing * -2, y + 500);
+          // const thingie2 = new StickIt(stageW / 2 + spacing * -2, y);
+
+
+        }
+
+        zog(orbsArray);
+        
+        //zog(thingie.positiveSide.hitTestCircles(thingie2.negativeSide));
+
+        Ticker.add(() => {
+
+          for (i=0; i < orbsArray[i].length; i++){
+
+            if (orbsArray[0].positiveSide.hitTestCircles(orbsArray[1].negativeSide, 100)) {
+                zog("true");
+
+              orbsArray[0].positiveSide.force(
+                  (orbsArray[1].negativeSide.x - orbsArray[0].positiveSide.x)*magnetism,
+                  (orbsArray[1].negativeSide.y - orbsArray[0].positiveSide.y)*magnetism
+                );
+              orbsArray[1].negativeSide.force(
+                (orbsArray[0].positiveSide.x - orbsArray[1].negativeSide.x)*magnetism,
+                (orbsArray[0].positiveSide.y - orbsArray[1].negativeSide.y)*magnetism
+              );
+
+            }
+
+
+          }
+         
+          
+        });
+
+
+        stage.update();
+      }); //end of ready
+    </script>
+    <meta name="viewport" content="width=device-width, user-scalable=no" />
+  </head>
+  <body></body>
+</html>
