@@ -236,10 +236,10 @@
 
             const theOrbImage = orbImageToUse[rand(orbImageToUse.length-1)]
 
-            const orbImage = (this.orbImage = asset(theOrbImage).clone().centerReg().loc(x,y).sca(1.13));
+            const orbImage = (this.orbImage = asset(theOrbImage).clone().centerReg().loc(x,y).sca(1));
             //.addPhysics());
 
-            let magnetAlp = 0.5;
+            let magnetAlp = 0;
 
             //Array to hold Positive Magnets
             const positiveMagnets = this.positiveMagnets = [
@@ -344,7 +344,7 @@
           for (i=0; i < orbsArray.length; i++){
             
             // orbsArray[i].orbLarge.outline();
-            orbsArray[i].orbImage.outline();
+            //orbsArray[i].orbImage.outline();
 
             // zog(orbsArray[i].orbImage);
             // zog(orbsArray[i].orbImage.x);
